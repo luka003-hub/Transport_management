@@ -6,7 +6,7 @@ This is a secure **Transport Data Management System** designed to streamline fle
 ## Key Features
 - **Secure Authentication:** Role-Based Access Control (RBAC) for Admins and Operators.
 - **Data Encryption:** Passwords hashed using `bcrypt` and session security via `JSON Web Tokens (JWT)`.
-- **Live Monitoring Dashboard:** Real-time overview of active vehicles, revenue, and security alerts.
+- **Live Monitoring Dashboard:**Real-time overview of active vehicles, revenue, and security alerts.
 - **Cybersecurity Focused:** Built-in protection against common vulnerabilities and activity logging for forensic auditing.
 
 ## Tech Stack
@@ -31,7 +31,7 @@ This is a secure **Transport Data Management System** designed to streamline fle
     npm install
 
 3. Configure Environment Variables:
-Create a .env file in the root directory and add the following:
+ Create a .env file in the root directory and add the following:
     PORT=3000
     JWT_SECRET=your_secret_key
     MONGO_URI=your_mongodb_uri
