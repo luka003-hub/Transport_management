@@ -20,9 +20,10 @@
             e.preventDefault();
             const token = localStorage.getItem('token');
             const data = {
-                regNumber: document.getElementById('regNumber').value,
+                vehicleReg: document.getElementById('regNumber').value,
                 route: document.getElementById('route').value,
-                driver: document.getElementById('driver').value
+                driver: document.getElementById('driver').value,
+                staus: "Active"
             };
 
             const res = await fetch('/api/vehicles', {

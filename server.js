@@ -2,17 +2,24 @@ const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const { applySecurity, ipBlocker } = require('./middleware/security');
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Apply security 
+applySecurity(app);
+app.use(ipBlocker);
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Registering all existing Routes
+// Routes
 app.use('/api/auth', require('./Routes/authRoutes'));
 app.use('/api/transit', require('./Routes/transitRoutes'));
 app.use('/api/vehicles', require('./Routes/vehicleRoutes'));
