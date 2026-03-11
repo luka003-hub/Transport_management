@@ -13,18 +13,8 @@
             <span class="text-xl font-bold tracking-tighter text-blue-400">T-DMS SECURE</span>
         </div>
         <nav class="space-y-6">
-            <a href="#" class="flex items-center space-x-3 p-2 bg-slate-800 rounded-lg text-blue-400 font-semibold">
-                <span>Dashboard</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 p-2 hover:bg-slate-800 transition rounded-lg">
-                <span>Fleet Tracking</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 p-2 hover:bg-slate-800 transition rounded-lg">
-                <span>Security Logs</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 p-2 hover:bg-slate-800 transition rounded-lg border-t border-slate-700 pt-6">
-                <span class="text-red-400">Logout</span>
-            </a>
+            <a href="#" class="flex items-center space-x-3 p-2 bg-slate-800 rounded-lg text-blue-400 font-semibold"><span>Dashboard</span></a>
+            <a href="#" id="logoutBtn" class="flex items-center space-x-3 p-2 hover:bg-slate-800 transition rounded-lg border-t border-slate-700 pt-6"><span class="text-red-400">Logout</span></a>
         </nav>
     </div>
 
@@ -42,53 +32,65 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                 <p class="text-slate-500 text-sm font-bold uppercase mb-1">Active Vehicles</p>
-                <h3 class="text-3xl font-bold">128</h3>
-                <p class="text-emerald-500 text-xs mt-2">↑ 4% from yesterday</p>
+                <h3 id="activeVehicles" class="text-3xl font-bold">...</h3>
             </div>
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                 <p class="text-slate-500 text-sm font-bold uppercase mb-1">Daily Revenue</p>
-                <h3 class="text-3xl font-bold">KES 84,200</h3>
-                <p class="text-slate-400 text-xs mt-2">Processed via Secure API</p>
+                <h3 id="totalRevenue" class="text-3xl font-bold">...</h3>
             </div>
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                 <p class="text-slate-500 text-sm font-bold uppercase mb-1">Blocked Attacks</p>
-                <h3 class="text-3xl font-bold text-red-600">07</h3>
-                <p class="text-slate-400 text-xs mt-2">Suspicious login attempts</p>
+                <h3 id="blockedAttacks" class="text-3xl font-bold text-red-600">...</h3>
             </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-6 border-b border-slate-100">
-                <h3 class="font-bold text-slate-800">Recent Transit Logs</h3>
-            </div>
+            <div class="p-6 border-b border-slate-100"><h3 class="font-bold text-slate-800">Recent Transit Logs</h3></div>
             <table class="w-full text-left">
                 <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
-                    <tr>
-                        <th class="px-6 py-4">Vehicle Reg</th>
-                        <th class="px-6 py-4">Route</th>
-                        <th class="px-6 py-4">Driver</th>
-                        <th class="px-6 py-4">Security Hash</th>
-                        <th class="px-6 py-4">Status</th>
-                    </tr>
+                    <tr><th class="px-6 py-4">Vehicle Reg</th><th class="px-6 py-4">Route</th><th class="px-6 py-4">Security Hash</th><th class="px-6 py-4">Status</th></tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 font-medium">KCD 445J</td>
-                        <td class="px-6 py-4">Nairobi - Thika</td>
-                        <td class="px-6 py-4">Mwangi J.</td>
-                        <td class="px-6 py-4 font-mono text-xs text-slate-400">8f3e...2a11</td>
-                        <td class="px-6 py-4"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">Active</span></td>
-                    </tr>
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 font-medium">KDB 991L</td>
-                        <td class="px-6 py-4">Juja - CBD</td>
-                        <td class="px-6 py-4">Kamau P.</td>
-                        <td class="px-6 py-4 font-mono text-xs text-slate-400">1c9d...9b02</td>
-                        <td class="px-6 py-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">Delayed</span></td>
-                    </tr>
-                </tbody>
+                <tbody id="transitTableBody" class="divide-y divide-slate-100">
+                    </tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        async function loadData() {
+            const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/index.html'; return; }
+
+            try {
+                const res = await fetch('/api/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    document.getElementById('activeVehicles').innerText = data.activeVehicles;
+                    document.getElementById('totalRevenue').innerText = `KES ${data.totalRevenue.toLocaleString()}`;
+                    document.getElementById('blockedAttacks').innerText = data.blockedAttacks.toString().padStart(2, '0');
+
+                    const tableBody = document.getElementById('transitTableBody');
+                    tableBody.innerHTML = data.recentLogs.map(log => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium">${log.vehicleReg}</td>
+                            <td class="px-6 py-4">${log.route}</td>
+                            <td class="px-6 py-4 font-mono text-xs text-slate-400">${log.securityHash ? log.securityHash.substring(0,10) + '...' : 'N/A'}</td>
+                            <td class="px-6 py-4"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">Secure</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) { console.error("Error loading stats:", err); }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/index.html';
+        });
+
+        window.onload = loadData;
+    </script>
 </body>
 </html>

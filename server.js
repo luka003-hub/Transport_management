@@ -3,25 +3,22 @@ const path = require('path');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
-// Load environment variables
 dotenv.config();
-
-// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Body Parser Middleware 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Link Authentication Routes
+// Registering all existing Routes
 app.use('/api/auth', require('./Routes/authRoutes'));
+app.use('/api/transit', require('./Routes/transitRoutes'));
+app.use('/api/vehicles', require('./Routes/vehicleRoutes'));
+app.use('/api/security', require('./Routes/securityRoutes'));
+app.use('/api/dashboard', require('./Routes/dashboardRoutes'));
 
-// Basic entry route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
