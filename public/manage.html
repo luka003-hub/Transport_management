@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Manage Fleet | T-DMS</title>
+</head>
+<body class="bg-slate-100 p-8">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold mb-6">Register New Vehicle</h2>
+        <form id="vehicleForm" class="space-y-4">
+            <input type="text" id="regNumber" placeholder="Reg Number (e.g. KCC 123X)" class="w-full p-2 border rounded" required>
+            <input type="text" id="route" placeholder="Assigned Route" class="w-full p-2 border rounded" required>
+            <input type="text" id="driver" placeholder="Driver Name" class="w-full p-2 border rounded" required>
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded font-bold">Add Vehicle to Fleet</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('vehicleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+            const data = {
+                regNumber: document.getElementById('regNumber').value,
+                route: document.getElementById('route').value,
+                driver: document.getElementById('driver').value
+            };
+
+            const res = await fetch('/api/vehicles', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert("Vehicle Added Successfully!");
+                window.location.href = '/dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
