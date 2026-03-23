@@ -3,11 +3,14 @@ const path = require('path');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const { applySecurity, ipBlocker } = require('./middleware/security');
+const rateLimit = require('express-rate-limit');
+const sanitizeInput = require('./middleware/sanitize');
 
 dotenv.config();
 connectDB();
 
 const app = express();
+app.set('trust proxy', 1);
 
 
 app.use(express.json());
@@ -18,6 +21,29 @@ applySecurity(app);
 app.use(ipBlocker);
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+//Global Sanitization (Apply to all routes)
+app.use(sanitizeInput);
+
+// Brute Force Protection Logic
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 login requests per window
+    handler: async (req, res) => {
+        const SecurityLog = require('./models/SecurityLog');
+        await SecurityLog.create({
+            ip: req.ip,
+            action: "Brute Force Threshold Reached",
+            blocked: true
+        });
+        res.status(429).json({ msg: "Too many attempts. Account locked for 15 minutes." });
+    }
+});
+
+//Apply the limiter ONLY to the login route
+app.use('/api/auth/login', loginLimiter);
+
 
 // Routes
 app.use('/api/auth', require('./Routes/authRoutes'));
