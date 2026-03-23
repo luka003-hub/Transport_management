@@ -55,6 +55,7 @@ const applySecurity = (app) => {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         "script-src": ["'self'", "https://cdn.tailwindcss.com", "'unsafe-inline'"],
+        "script-src-attr": ["'unsafe-inline'"]
       },
     },
   }));

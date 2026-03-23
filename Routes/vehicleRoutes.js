@@ -26,19 +26,19 @@ router.get("/", authenticate, async (req, res) => {
  */
 router.post("/", authenticate, authorize("admin"), async (req, res) => {
   try {
-    const { vehicleReg, status, route, driver } = req.body;
+    const { regNumber, status, route, driver } = req.body;
 
-    if (!vehicleReg) {
+    if (!regNumber) {
       return res.status(400).json({ error: "Vehicle registration is required" });
     }
 
-    const existingVehicle = await Vehicle.findOne({ vehicleReg });
+    const existingVehicle = await Vehicle.findOne({ regNumber });
     if (existingVehicle) {
       return res.status(400).json({ error: "Vehicle already registered" });
     }
 
     const vehicle = new Vehicle({ 
-      vehicleReg, 
+      regNumber,
       route,
       driver,
       status: status || "Active" 
