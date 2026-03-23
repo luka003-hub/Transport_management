@@ -1,6 +1,5 @@
 const express = require("express");
 const Vehicle = require("../models/vehicle");
-// FIX: Destructure authenticate and authorize from the middleware object
 const { authenticate, authorize } = require("../middleware/auth");
 
 const router = express.Router();
@@ -27,13 +26,12 @@ router.get("/", authenticate, async (req, res) => {
  */
 router.post("/", authenticate, authorize("admin"), async (req, res) => {
   try {
-    const { vehicleReg, status } = req.body;
+    const { vehicleReg, status, route, driver } = req.body;
 
     if (!vehicleReg) {
       return res.status(400).json({ error: "Vehicle registration is required" });
     }
 
-    // Check if vehicle already exists to prevent duplicates
     const existingVehicle = await Vehicle.findOne({ vehicleReg });
     if (existingVehicle) {
       return res.status(400).json({ error: "Vehicle already registered" });
@@ -41,6 +39,8 @@ router.post("/", authenticate, authorize("admin"), async (req, res) => {
 
     const vehicle = new Vehicle({ 
       vehicleReg, 
+      route,
+      driver,
       status: status || "Active" 
     });
 
@@ -50,6 +50,24 @@ router.post("/", authenticate, authorize("admin"), async (req, res) => {
     console.error("Create Vehicle Error:", error);
     res.status(500).json({ error: "Error creating vehicle" });
   }
+});
+
+/**
+ * @route   DELETE /api/vehicles/:id
+ * @desc    Remove a vehicle from fleet
+ * @access  Private (Admin Only)
+ */
+router.delete("/:id", authenticate, authorize("admin"), async (req, res) => {
+    try {
+        const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
+        if (!vehicle) {
+            return res.status(404).json({ error: "Vehicle not found" });
+        }
+        res.json({ msg: "Vehicle removed successfully" });
+    } catch (error) {
+        console.error("Delete Vehicle Error:", error);
+        res.status(500).json({ error: "Internal server error during deletion" });
+    }
 });
 
 module.exports = router;

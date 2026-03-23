@@ -57,6 +57,30 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-slate-900 p-6 rounded-xl border border-blue-500/30">
+                <h4 class="text-blue-400 font-bold mb-2 flex items-center text-sm">
+                    <span class="mr-2">🛡️</span> AES-256 Encryption
+                </h4>
+                <div class="flex items-center space-x-4">
+                    <div class="w-full bg-slate-800 rounded-full h-1.5">
+                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 100%"></div>
+                    </div>
+                    <span class="text-[10px] font-mono text-blue-300 uppercase">Active</span>
+                </div>
+            </div>
+            <div class="bg-slate-900 p-6 rounded-xl border border-emerald-500/30">
+                <h4 class="text-emerald-400 font-bold mb-2 flex items-center text-sm">
+                    <span class="mr-2">🛰️</span> Active Middleware Shield
+                </h4>
+                <div class="flex space-x-4 text-[9px] font-mono text-slate-400">
+                    <span>XSS: ENABLED</span>
+                    <span>NoSQL: ENABLED</span>
+                    <span>RATE-LIMIT: ACTIVE</span>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-10">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center">
                 <h3 class="font-bold text-slate-800 text-lg">Recent Transit Logs</h3>
@@ -68,11 +92,10 @@
                         <th class="px-6 py-4">Vehicle Reg</th>
                         <th class="px-6 py-4">Route</th>
                         <th class="px-6 py-4">Integrity Hash</th>
-                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4 text-right">Status</th>
                     </tr>
                 </thead>
-                <tbody id="transitTableBody" class="divide-y divide-slate-100 text-sm">
-                    </tbody>
+                <tbody id="transitTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
             </table>
         </div>
 
@@ -86,10 +109,10 @@
                         <th class="px-6 py-4">Registration</th>
                         <th class="px-6 py-4">Current Status</th>
                         <th class="px-6 py-4">Last Sync</th>
+                        <th class="px-6 py-4 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="fleetTableBody" class="divide-y divide-slate-100 text-sm">
-                    </tbody>
+                <tbody id="fleetTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
             </table>
         </div>
     </div>
@@ -100,7 +123,6 @@
             if (!token) { window.location.href = '/index.html'; return; }
 
             try {
-                // 1. Fetch Stats & Logs
                 const res = await fetch('/api/dashboard/stats', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -119,14 +141,13 @@
                             <td class="px-6 py-4 font-mono text-[10px] text-slate-400 tracking-tighter">
                                 ${log.securityHash ? log.securityHash.substring(0,24) + '...' : 'UNHASHED_ERR'}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 text-right">
                                 <span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-[10px] font-black uppercase">Verified</span>
                             </td>
                         </tr>
                     `).join('');
                 }
 
-                // 2. Fetch Fleet Inventory
                 const vRes = await fetch('/api/vehicles', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -143,16 +164,32 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-xs text-slate-400 font-mono italic">${new Date().toLocaleTimeString()}</td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="deleteVehicle('${v._id}')" class="text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </td>
                         </tr>
                     `).join('');
                 }
 
-            } catch (err) { 
-                console.error("Dashboard Sync Error:", err); 
-            }
+            } catch (err) { console.error("Dashboard Sync Error:", err); }
         }
 
-        // Secure Logout Handling
+        async function deleteVehicle(id) {
+            if (!confirm("Permanently remove this vehicle from the secure fleet inventory?")) return;
+            const token = localStorage.getItem('token');
+            try {
+                const res = await fetch(`/api/vehicles/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) { loadData(); } else { alert("Unauthorized: Access Denied."); }
+            } catch (err) { console.error(err); }
+        }
+
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.removeItem('token');
