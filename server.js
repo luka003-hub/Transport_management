@@ -6,27 +6,31 @@ const { applySecurity, ipBlocker } = require('./middleware/security');
 const rateLimit = require('express-rate-limit');
 const sanitizeInput = require('./middleware/sanitize');
 
+// 1. Initialize environment variables immediately
 dotenv.config();
+
+// 2. Connect to Database
 connectDB();
 
 const app = express();
-app.set('trust proxy', 1);
 
+// Required for Rate Limiting to work correctly on Render/Cloud
+app.set('trust proxy', 1);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Apply security 
+// 3. Apply Security Layers
 applySecurity(app);
 app.use(ipBlocker);
 
+// 4. Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-//Global Sanitization (Apply to all routes)
+// 5. Global Sanitization
 app.use(sanitizeInput);
 
-// Brute Force Protection Logic
+// 6. Brute Force Protection Logic
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 5, // Limit each IP to 5 login requests per window
@@ -41,11 +45,10 @@ const loginLimiter = rateLimit({
     }
 });
 
-//Apply the limiter ONLY to the login route
+// Apply the limiter ONLY to the login route
 app.use('/api/auth/login', loginLimiter);
 
-
-// Routes
+// 7. API Routes
 app.use('/api/auth', require('./Routes/authRoutes'));
 app.use('/api/transit', require('./Routes/transitRoutes'));
 app.use('/api/vehicles', require('./Routes/vehicleRoutes'));
@@ -56,7 +59,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// 8. PRODUCTION LISTEN LOGIC
+// Render assigns a dynamic port. Binding to '0.0.0.0' is mandatory for Render to route traffic.
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
 });
