@@ -9,7 +9,7 @@ const router = express.Router();
  * @desc    Get all vehicles
  * @access  Private (All authenticated users)
  */
-router.get("/", authenticate, async (req, res) => {
+router.get("/api/vehicles", authenticate, async (req, res) => {
   try {
     const vehicles = await Vehicle.find();
     res.json(vehicles);
@@ -24,7 +24,7 @@ router.get("/", authenticate, async (req, res) => {
  * @desc    Add a new vehicle
  * @access  Private (Admin Only)
  */
-router.post("/", authenticate, authorize("admin"), async (req, res) => {
+router.post("/api/vehicles", authenticate, authorize("admin"), async (req, res) => {
   try {
     const { regNumber, status, route, driver } = req.body;
 
@@ -57,7 +57,7 @@ router.post("/", authenticate, authorize("admin"), async (req, res) => {
  * @desc    Remove a vehicle from fleet
  * @access  Private (Admin Only)
  */
-router.delete("/:id", authenticate, authorize("admin"), async (req, res) => {
+router.delete("/api/vehicles/:id", authenticate, authorize("admin"), async (req, res) => {
     try {
         const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
         if (!vehicle) {

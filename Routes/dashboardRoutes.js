@@ -5,7 +5,7 @@ const SecurityLog = require('../models/SecurityLog');
 const Vehicle = require('../models/vehicle');
 const { authenticate } = require('../middleware/auth');
 
-router.get('/stats', authenticate, async (req, res) => {
+router.get('/api/dashboard/stats', authenticate, async (req, res) => {
     try {
         const [activeVehicles, revenueResult, blockedAttacks, recentLogs] = await Promise.all([
             Vehicle.countDocuments({ status: "Active" }),
