@@ -6,129 +6,336 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Admin Dashboard | Transport DMS</title>
 </head>
-<body class="bg-slate-100 flex flex-col md:flex-row">
-    <div id="sidebar" class="w-full md:w-64 bg-slate-900 md:h-screen sticky top-0 p-6 text-white shadow-xl z-20">
-        <div class="flex justify-between items-center mb-6 md:mb-10">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-blue-500 rounded-lg"></div>
-                <span class="text-xl font-bold tracking-tighter text-blue-400 uppercase">T-DMS</span>
-            </div>
-            <button class="md:hidden text-white" onclick="document.getElementById('nav-links').classList.toggle('hidden')">☰</button>
+<body class="bg-slate-100 flex">
+
+    <div class="w-64 bg-slate-900 h-screen sticky top-0 p-6 text-white shadow-xl">
+
+        <div class="flex items-center space-x-2 mb-10">
+
+            <div class="w-8 h-8 bg-blue-500 rounded-lg shadow-lg shadow-blue-500/50"></div>
+
+            <span class="text-xl font-bold tracking-tighter text-blue-400">T-DMS SECURE</span>
+
         </div>
-        <nav id="nav-links" class="hidden md:block space-y-4">
+
+        <nav class="space-y-4">
+
             <a href="dashboard.html" class="flex items-center space-x-3 p-3 bg-slate-800 rounded-lg text-blue-400 font-semibold border-l-4 border-blue-500">
+
                 <span>Dashboard</span>
+
             </a>
+
             <a href="manage.html" class="flex items-center space-x-3 p-3 hover:bg-slate-800 transition rounded-lg text-slate-300">
+
                 <span>Register Vehicle</span>
+
             </a>
+
             <a href="recordtrip.html" class="flex items-center space-x-3 p-3 hover:bg-slate-800 transition rounded-lg text-emerald-400 font-bold italic">
+
                 <span>+ Record Trip</span>
+
             </a>
+
             <a href="securitylogs.html" class="flex items-center space-x-3 p-3 hover:bg-slate-800 transition rounded-lg text-slate-300">
+
                 <span>Security Audit</span>
+
             </a>
+
             <a href="#" id="logoutBtn" class="flex items-center space-x-3 p-3 hover:bg-red-900/20 transition rounded-lg border-t border-slate-700 mt-10">
+
                 <span class="text-red-400 font-bold">Logout</span>
+
             </a>
+
         </nav>
+
     </div>
 
-    <div class="flex-1 p-4 md:p-8 overflow-y-auto">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+
+
+    <div class="flex-1 p-8 overflow-y-auto">
+
+        <header class="flex justify-between items-center mb-10">
+
             <div>
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">System Overview</h2>
-                <p class="text-slate-500 text-sm">Fleet Operations & Integrity Dashboard</p>
+
+                <h2 class="text-3xl font-bold text-slate-800">System Overview</h2>
+
+                <p class="text-slate-500">Fleet Operations & Integrity Dashboard</p>
+
             </div>
-            <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-[10px] font-black animate-pulse border border-emerald-300 uppercase">
+
+            <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-xs font-black animate-pulse border border-emerald-300 uppercase">
+
                 Status: Encrypted & Secure
+
             </div>
+
         </header>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 text-center">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-center">
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
+
                 <p class="text-slate-400 text-xs font-bold uppercase mb-1">Active Vehicles</p>
+
                 <h3 id="activeVehicles" class="text-3xl font-black text-slate-800">...</h3>
+
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
+
                 <p class="text-slate-400 text-xs font-bold uppercase mb-1">Daily Revenue</p>
-                <h3 id="totalRevenue" class="text-3xl font-black text-blue-600">...</h3>
+
+                <h3 id="totalRevenue" class="text-3xl font-black text-slate-800 text-blue-600">...</h3>
+
             </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
+
                 <p class="text-slate-400 text-xs font-bold uppercase mb-1">Blocked Intrusions</p>
+
                 <h3 id="blockedAttacks" class="text-3xl font-black text-red-600">...</h3>
+
             </div>
+
         </div>
+
+
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
             <div class="bg-slate-900 p-6 rounded-xl border border-blue-500/30">
-                <h4 class="text-blue-400 font-bold mb-2 flex items-center text-sm">🛡️ AES-256 Encryption</h4>
-                <div class="bg-slate-800 rounded-full h-1.5 w-full"><div class="bg-blue-500 h-1.5 rounded-full w-full"></div></div>
+
+                <h4 class="text-blue-400 font-bold mb-2 flex items-center text-sm">
+
+                    <span class="mr-2">🛡️</span> AES-256 Encryption
+
+                </h4>
+
+                <div class="flex items-center space-x-4">
+
+                    <div class="w-full bg-slate-800 rounded-full h-1.5">
+
+                        <div class="bg-blue-500 h-1.5 rounded-full" style="width: 100%"></div>
+
+                    </div>
+
+                    <span class="text-[10px] font-mono text-blue-300 uppercase">Active</span>
+
+                </div>
+
             </div>
+
             <div class="bg-slate-900 p-6 rounded-xl border border-emerald-500/30">
-                <h4 class="text-emerald-400 font-bold mb-2 flex items-center text-sm">🛰️ Middleware Shield</h4>
-                <p class="text-[9px] font-mono text-slate-400 uppercase">XSS: ON | NoSQL: ON | Rate-Limit: ON</p>
+
+                <h4 class="text-emerald-400 font-bold mb-2 flex items-center text-sm">
+
+                    <span class="mr-2">🛰️</span> Active Middleware Shield
+
+                </h4>
+
+                <div class="flex space-x-4 text-[9px] font-mono text-slate-400">
+
+                    <span>XSS: ENABLED</span>
+
+                    <span>NoSQL: ENABLED</span>
+
+                    <span>RATE-LIMIT: ACTIVE</span>
+
+                </div>
+
             </div>
+
         </div>
+
+
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-10">
-            <div class="p-4 bg-slate-50 border-b border-slate-100"><h3 class="font-bold text-slate-800">Transit Logs</h3></div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left min-w-[600px]">
-                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase"><tr class="border-b"><th class="px-6 py-4">Reg</th><th class="px-6 py-4">Route</th><th class="px-6 py-4">Hash</th><th class="px-6 py-4 text-right">Status</th></tr></thead>
-                    <tbody id="transitTableBody" class="divide-y text-sm"></tbody>
-                </table>
+
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+
+                <h3 class="font-bold text-slate-800 text-lg">Recent Transit Logs</h3>
+
+                <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold uppercase tracking-widest">SHA-256 Hashed</span>
+
             </div>
+
+            <table class="w-full text-left">
+
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-tighter">
+
+                    <tr>
+
+                        <th class="px-6 py-4">Vehicle Reg</th>
+
+                        <th class="px-6 py-4">Route</th>
+
+                        <th class="px-6 py-4">Integrity Hash</th>
+
+                        <th class="px-6 py-4 text-right">Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="transitTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+
+            </table>
+
         </div>
+
+
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-4 bg-slate-50 border-b border-slate-100"><h3 class="font-bold text-slate-800">Fleet Inventory</h3></div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left min-w-[600px]">
-                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase"><tr class="border-b"><th class="px-6 py-4">Reg</th><th class="px-6 py-4">Status</th><th class="px-6 py-4">Sync</th><th class="px-6 py-4 text-right">Actions</th></tr></thead>
-                    <tbody id="fleetTableBody" class="divide-y text-sm"></tbody>
-                </table>
+
+            <div class="p-6 border-b border-slate-100">
+
+                <h3 class="font-bold text-slate-800 text-lg">Fleet Inventory</h3>
+
             </div>
+
+            <table class="w-full text-left">
+
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-tighter">
+
+                    <tr>
+
+                        <th class="px-6 py-4">Registration</th>
+
+                        <th class="px-6 py-4">Current Status</th>
+
+                        <th class="px-6 py-4">Last Sync</th>
+
+                        <th class="px-6 py-4 text-right">Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="fleetTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+
+            </table>
+
         </div>
+
     </div>
 
+
+
     <script>
-        async function loadData() {
-            const token = localStorage.getItem('token');
-            if (!token) { window.location.href = '/index.html'; return; }
+    async function loadData() {
+        const token = localStorage.getItem('token');
+        if (!token) { window.location.href = '/index.html'; return; }
+
             try {
-                const res = await fetch('/api/dashboard/stats', { headers: { 'Authorization': `Bearer ${token}` } });
+                // 1. Fetch Stats
+                const res = await fetch('/api/dashboard/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const data = await res.json();
+
                 if (res.ok) {
-                    document.getElementById('activeVehicles').innerText = data.activeVehicles;
-                    document.getElementById('totalRevenue').innerText = `KES ${data.totalRevenue.toLocaleString()}`;
-                    document.getElementById('blockedAttacks').innerText = data.blockedAttacks.toString().padStart(2, '0');
-                    document.getElementById('transitTableBody').innerHTML = data.recentLogs.map(log => `
-                        <tr><td class="px-6 py-4 font-bold">${log.vehicleReg}</td><td class="px-6 py-4">${log.route}</td><td class="px-6 py-4 font-mono text-[10px]">${log.securityHash?.substring(0,15)}...</td><td class="px-6 py-4 text-right"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px]">Verified</span></td></tr>
+                    document.getElementById('activeVehicles').innerText = data.activeVehicles || 0;
+                    document.getElementById('totalRevenue').innerText = `KES ${(data.totalRevenue || 0).toLocaleString()}`;
+                    document.getElementById('blockedAttacks').innerText = (data.blockedAttacks || 0).toString().padStart(2, '0');
+
+                    const transitBody = document.getElementById('transitTableBody');
+                    // Ensure recentLogs exists before mapping
+                    const logs = data.recentLogs || [];
+                    transitBody.innerHTML = logs.map(log => `
+                        <tr class="hover:bg-blue-50/50 transition">
+                            <td class="px-6 py-4 font-bold text-slate-700">${log.vehicleReg}</td>
+                            <td class="px-6 py-4 text-slate-500">${log.route}</td>
+                            <td class="px-6 py-4 font-mono text-[10px] text-slate-400 tracking-tighter">
+                                ${log.securityHash ? log.securityHash.substring(0,24) + '...' : 'UNHASHED_ERR'}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-[10px] font-black uppercase">Verified</span>
+                            </td>
+                        </tr>
                     `).join('');
                 }
-                const vRes = await fetch('/api/vehicles', { headers: { 'Authorization': `Bearer ${token}` } });
+
+                // 2. Fetch Fleet Inventory
+                const vRes = await fetch('/api/vehicles', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 const vehicles = await vRes.json();
+                
+                // LOG THIS TO YOUR CONSOLE (F12) TO SEE IF DATA IS ARRIVING
+                console.log("Vehicles received:", vehicles);
+
                 if (vRes.ok) {
-                    document.getElementById('fleetTableBody').innerHTML = vehicles.map(v => `
-                        <tr class="border-b"><td class="px-6 py-4 font-black">${v.regNumber}</td><td class="px-6 py-4"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-[10px]">${v.status}</span></td><td class="px-6 py-4 text-xs font-mono">${new Date().toLocaleTimeString()}</td><td class="px-6 py-4 text-right"><button data-id="${v._id}" class="delete-btn text-red-400">Delete</button></td></tr>
-                    `).join('');
+                    const fleetBody = document.getElementById('fleetTableBody');
+                    
+                    // If the array is empty, show a message so you know the connection is working
+                    if (!vehicles || vehicles.length === 0) {
+                        fleetBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">No vehicles registered yet.</td></tr>`;
+                    } else {
+                        fleetBody.innerHTML = vehicles.map(v => `
+                            <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                                <td class="px-6 py-4 font-black text-slate-800 uppercase tracking-widest">${v.regNumber || 'Pending...'}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${v.status === 'Active' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'}">
+                                        ${v.status || 'Active'}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-xs text-slate-400 font-mono italic">${new Date().toLocaleTimeString()}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button data-id="${v._id}" class="delete-btn text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
                     attachDeleteListeners();
                 }
-            } catch (err) { console.error(err); }
+
+            } catch (err) { 
+                console.error("Dashboard Sync Error:", err); 
+            }
         }
+
         function attachDeleteListeners() {
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.onclick = async function() {
                     const id = this.getAttribute('data-id');
-                    if (!confirm("Remove vehicle?")) return;
-                    const res = await fetch(`/api/vehicles/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
-                    if (res.ok) loadData();
+                    if (!confirm("Permanently remove this vehicle?")) return;
+                    
+                    const token = localStorage.getItem('token');
+                    try {
+                        const res = await fetch(`/api/vehicles/${id}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (res.ok) {
+                            loadData();
+                        } else {
+                            alert("Unauthorized or Server Error.");
+                        }
+                    } catch (err) { console.error(err); }
                 };
             });
         }
-        document.getElementById('logoutBtn').onclick = () => { localStorage.removeItem('token'); window.location.href='/index.html'; };
+
+        document.getElementById('logoutBtn').onclick = (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '/index.html';
+        };
+
         window.onload = loadData;
     </script>
+
 </body>
+
 </html>
