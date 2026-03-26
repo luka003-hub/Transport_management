@@ -9,7 +9,7 @@ const { encrypt } = require("../utils/encryption");
 const router = express.Router();
 
 // @route   POST /api/transit
-router.post("/api/transit", authenticate, authorize("admin"), async (req, res) => {
+router.post("/", authenticate, authorize("admin"), async (req, res) => {
   try {
     const { vehicleReg, route, driver, revenue } = req.body;
 
@@ -46,7 +46,7 @@ router.post("/api/transit", authenticate, authorize("admin"), async (req, res) =
 });
 
 // @route   GET /api/transit
-router.get("/api/transit", authenticate, async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
     const logs = await TransitLog.find().sort({ timestamp: -1 }).limit(100);
     res.json(logs);
@@ -56,7 +56,7 @@ router.get("/api/transit", authenticate, async (req, res) => {
 });
 
 // @route   GET /api/transit/daily-revenue
-router.get("/api/transit/daily-revenue", authenticate, async (req, res) => {
+router.get("/daily-revenue", authenticate, async (req, res) => {
   try {
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
@@ -73,7 +73,7 @@ router.get("/api/transit/daily-revenue", authenticate, async (req, res) => {
 });
 
 // @route   DELETE
-router.delete("/api/transit/:id", authenticate, authorize("admin"), async (req, res) => {
+router.delete("/:id", authenticate, authorize("admin"), async (req, res) => {
   try {
     const log = await TransitLog.findByIdAndDelete(req.params.id);
     if (!log) return res.status(404).json({ error: "Log not found" });

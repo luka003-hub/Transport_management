@@ -41,7 +41,7 @@ router.post("api/security/log", authenticate, async (req, res) => {
 });
 
 // @route   POST /api/security/block-ip
-router.post("/api/security/block-ip", authenticate, authorize("admin"), async (req, res) => {
+router.post("/block-ip", authenticate, authorize("admin"), async (req, res) => {
   try {
     const { ip, reason } = req.body;
     if (!ip) return res.status(400).json({ error: "IP required" });
