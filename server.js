@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // 3. Apply Security Layers
 applySecurity(app);
-app.use(ipBlocker);
+//app.use(ipBlocker);
 
 // 4. Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
