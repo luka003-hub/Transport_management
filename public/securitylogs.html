@@ -2,71 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Security Audit | T-DMS</title>
 </head>
-<body class="bg-slate-900 text-slate-200 p-8">
+<body class="bg-slate-900 text-slate-200 p-4 md:p-8">
     <div class="max-w-4xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
-                <h2 class="text-3xl font-bold text-white">Security Intelligence</h2>
-                <p class="text-slate-400 text-sm">Real-time threat detection & audit trail</p>
+                <h2 class="text-2xl md:text-3xl font-bold text-white">Security Intelligence</h2>
+                <p class="text-slate-400 text-sm">Real-time threat detection</p>
             </div>
-            <a href="dashboard.html" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm border border-slate-700 transition">← Dashboard</a>
-        </div>
+            <a href="dashboard.html" class="bg-slate-800 px-4 py-2 rounded-lg text-sm border border-slate-700">← Dashboard</a>
+        </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div class="bg-slate-800 p-4 rounded-xl border border-emerald-500/30">
-                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Injection Shield</p>
-                <h4 class="text-xl font-bold text-white">ACTIVE</h4>
+                <p class="text-[10px] text-emerald-400 uppercase font-bold">Injection Shield</p>
+                <h4 class="text-xl font-bold">ACTIVE</h4>
             </div>
             <div class="bg-slate-800 p-4 rounded-xl border border-blue-500/30">
-                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Brute-Force Guard</p>
-                <h4 class="text-xl font-bold text-white">ENABLED</h4>
+                <p class="text-[10px] text-blue-400 uppercase font-bold">Brute-Force Guard</p>
+                <h4 class="text-xl font-bold">ENABLED</h4>
             </div>
             <div class="bg-slate-800 p-4 rounded-xl border border-red-500/30">
-                <p class="text-[10px] text-red-400 font-bold uppercase tracking-widest">Threat Level</p>
-                <h4 id="threatCount" class="text-xl font-bold text-white">00</h4>
+                <p class="text-[10px] text-red-400 uppercase font-bold">Threat Level</p>
+                <h4 id="threatCount" class="text-xl font-bold">00</h4>
             </div>
         </div>
         
-        <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-2xl">
-            <div class="p-4 bg-slate-700/50 border-b border-slate-600">
-                <h3 class="text-xs font-black uppercase text-slate-400 tracking-widest">Intrusion Attempt Logs</h3>
+        <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left min-w-[600px]">
+                    <thead class="bg-slate-700/30 text-slate-400 text-[10px] uppercase">
+                        <tr><th class="px-6 py-4">Origin IP</th><th class="px-6 py-4">Event</th><th class="px-6 py-4 text-right">Action</th></tr>
+                    </thead>
+                    <tbody id="securityLogTable" class="divide-y divide-slate-700 text-sm"></tbody>
+                </table>
             </div>
-            <table class="w-full text-left">
-                <thead class="bg-slate-700/30 text-slate-400 text-[10px] uppercase">
-                    <tr>
-                        <th class="px-6 py-4">Origin IP</th>
-                        <th class="px-6 py-4">Event Description</th>
-                        <th class="px-6 py-4 text-right">Action Taken</th>
-                    </tr>
-                </thead>
-                <tbody id="securityLogTable" class="divide-y divide-slate-700">
-                    </tbody>
-            </table>
         </div>
     </div>
 
     <script>
         async function loadSecurityLogs() {
-            const token = localStorage.getItem('token');
-            const res = await fetch('/api/security/logs', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const res = await fetch('/api/security/logs', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
             const logs = await res.json();
-            
             document.getElementById('threatCount').innerText = logs.length.toString().padStart(2, '0');
-
             document.getElementById('securityLogTable').innerHTML = logs.reverse().map(log => `
-                <tr class="hover:bg-slate-750 transition group">
-                    <td class="px-6 py-4 font-mono text-sm text-blue-300">${log.ip}</td>
+                <tr class="hover:bg-slate-750 transition">
+                    <td class="px-6 py-4 font-mono text-blue-300 text-xs">${log.ip}</td>
                     <td class="px-6 py-4">
-                        <div class="text-sm text-white">${log.action}</div>
+                        <div class="text-white">${log.action}</div>
                         <div class="text-[10px] text-slate-500">${new Date(log.timestamp).toLocaleString()}</div>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <span class="${log.blocked ? 'bg-red-900/30 text-red-400' : 'bg-yellow-900/30 text-yellow-400'} text-[10px] font-black px-2 py-1 rounded border ${log.blocked ? 'border-red-500/50' : 'border-yellow-500/50'}">
+                        <span class="${log.blocked ? 'text-red-400 border-red-500' : 'text-yellow-400 border-yellow-500'} text-[9px] font-black px-2 py-1 rounded border uppercase">
                             ${log.blocked ? 'TERMINATED' : 'FLAGGED'}
                         </span>
                     </td>

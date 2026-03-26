@@ -1,50 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Record Trip | T-DMS</title>
 </head>
-<body class="bg-slate-100 p-8">
-    <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-500">
+<body class="bg-slate-100 p-4 md:p-8">
+    <div class="max-w-md mx-auto bg-white p-6 md:p-8 rounded-xl shadow-md border-t-4 border-blue-500">
         <h2 class="text-2xl font-bold mb-6 text-slate-800">Record New Trip</h2>
         <form id="tripForm" class="space-y-4">
-            <input type="text" id="vehicleReg" placeholder="Vehicle Reg (e.g. KCD 445J)" class="w-full p-2 border rounded bg-slate-50" required>
-            <input type="text" id="route" placeholder="Route (e.g. Nairobi - Juja)" class="w-full p-2 border rounded bg-slate-50" required>
-            <input type="text" id="driver" placeholder="Driver Name" class="w-full p-2 border rounded bg-slate-50" required>
-            <input type="number" id="revenue" placeholder="Revenue Collected (KES)" class="w-full p-2 border rounded bg-slate-50" required>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded font-bold transition">Securely Log Trip</button>
+            <input type="text" id="vehicleReg" placeholder="Vehicle Reg (e.g. KCD 445J)" class="w-full p-3 border rounded bg-slate-50" required>
+            <input type="text" id="route" placeholder="Route (e.g. Nairobi - Juja)" class="w-full p-3 border rounded bg-slate-50" required>
+            <input type="text" id="driver" placeholder="Driver Name" class="w-full p-3 border rounded bg-slate-50" required>
+            <input type="number" id="revenue" placeholder="Revenue Collected (KES)" class="w-full p-3 border rounded bg-slate-50" required>
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded font-bold">Securely Log Trip</button>
+            <a href="dashboard.html" class="block text-center text-slate-500 text-sm mt-4">Cancel</a>
         </form>
-        <div class="mt-4 text-center">
-            <a href="dashboard.html" class="text-slate-500 text-sm hover:underline">Cancel and Return</a>
-        </div>
     </div>
-
     <script>
         document.getElementById('tripForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const token = localStorage.getItem('token');
             const data = {
                 vehicleReg: document.getElementById('vehicleReg').value,
                 route: document.getElementById('route').value,
                 driver: document.getElementById('driver').value,
                 revenue: Number(document.getElementById('revenue').value)
             };
-
             const res = await fetch('/api/transit', {
                 method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 body: JSON.stringify(data)
             });
-
-            if (res.ok) {
-                alert("Trip Logged and Encrypted!");
-                window.location.href = '/dashboard.html';
-            } else {
-                alert("Security Error: Trip logging failed.");
-            }
+            if (res.ok) { alert("Trip Encrypted!"); window.location.href = '/dashboard.html'; }
         });
     </script>
 </body>

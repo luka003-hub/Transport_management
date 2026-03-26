@@ -6,8 +6,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Login | Transport DMS</title>
 </head>
-<body class="bg-slate-900 flex items-center justify-center h-screen">
-    <div class="bg-slate-800 p-8 rounded-xl shadow-2xl w-full max-w-md border-b-4 border-blue-500">
+<body class="bg-slate-900 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-slate-800 p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-md border-b-4 border-blue-500">
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold text-white uppercase tracking-wider">Transport DMS</h1>
             <p class="text-slate-400 text-sm">Secure Management Portal</p>
@@ -35,18 +35,14 @@
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
-
                 const data = await response.json();
-                
                 if (response.ok) {
-                    // Save the token locally for private routes
                     localStorage.setItem('token', data.token);
                     window.location.href = '/dashboard.html';
                 } else {
