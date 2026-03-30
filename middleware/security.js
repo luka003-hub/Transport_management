@@ -3,52 +3,10 @@ const rateLimit = require("express-rate-limit");
 const SecurityLog = require("../models/SecurityLog");
 
 /**
- * Custom Manual Sanitizer for Node.js v22 Compatibility
- * This cleans '$' and '.' from keys in req.body, req.query, and req.params
+ * applySecurity handles global security headers and rate limiting.
+ * The NoSQL Sanitization and Logging are now handled exclusively 
+ * by the dedicated sanitizeInput middleware to prevent logic collisions.
  */
-const manualSanitize = (req, res, next) => {
-  const sanitize = (obj) => {
-    if (obj instanceof Object && !Array.isArray(obj)) {
-      for (const key in obj) {
-        let currentKey = key;
-        
-        // If key is malicious, rename it
-        if (key.startsWith('$') || key.includes('.')) {
-          const sanitizedKey = key.replace(/[\$.]/g, '_');
-          obj[sanitizedKey] = obj[key];
-          delete obj[key];
-          currentKey = sanitizedKey;
-        }
-        
-        // Recursively sanitize nested objects
-        if (obj[currentKey] instanceof Object) {
-          sanitize(obj[currentKey]);
-        }
-      }
-    }
-  };
-
-  if (req.body) sanitize(req.body);
-  if (req.params) sanitize(req.params);
-  if (req.query) {
-    try {
-      // Clean query parameters safely without overwriting the read-only object
-      const queryStr = JSON.stringify(req.query).replace(/["']\$[^"']+["']:/g, (match) => match.replace('$', '_'));
-      const cleanQuery = JSON.parse(queryStr);
-      
-      // Remove original malicious keys
-      for (const key in req.query) {
-        if (key.startsWith('$') || key.includes('.')) delete req.query[key];
-      }
-      // Inject clean keys
-      Object.assign(req.query, cleanQuery);
-    } catch (e) {
-      console.error("Query Sanitization Error:", e);
-    }
-  }
-  next();
-};
-
 const applySecurity = (app) => {
   app.use(helmet({
     contentSecurityPolicy: {
@@ -60,33 +18,36 @@ const applySecurity = (app) => {
     },
   }));
 
-  //manual fix instead of the express-mongo-sanitize package
-  app.use(manualSanitize);
-
-  // Rate limiting
+  // Rate limiting to prevent DoS and brute force at the network level
   const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per window
     handler: async (req, res) => {
       try {
         await SecurityLog.create({
-          ip: req.ip,
+          ip: req.ip || 'Unknown',
           action: "Rate limit exceeded",
           blocked: true,
         });
-      } catch (err) { console.error(err); }
-      res.status(429).json({ error: "Too many requests." });
+      } catch (err) { console.error("Rate Limit Logging Error:", err); }
+      res.status(429).json({ error: "Too many requests. Please try again later." });
     },
   });
 
   app.use(limiter);
 };
 
+/**
+ * ipBlocker checks if an IP address has been flagged as 'blocked' 
+ * in the SecurityLog collection.
+ */
 const ipBlocker = async (req, res, next) => {
   try {
-    const blocked = await SecurityLog.findOne({ ip: req.ip, blocked: true });
-    if (blocked) return res.status(403).json({ error: "Your IP has been blocked." });
-  } catch (err) { console.error(err); }
+    const blockedEntry = await SecurityLog.findOne({ ip: req.ip, blocked: true });
+    if (blockedEntry) {
+      return res.status(403).json({ error: "Access Denied: Your IP has been blocked due to security violations." });
+    }
+  } catch (err) { console.error("IP Blocker Error:", err); }
   next();
 };
 

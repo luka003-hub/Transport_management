@@ -5,11 +5,24 @@ const sanitizeInput = async (req, res, next) => {
         let detected = false;
         if (obj instanceof Object) {
             for (var key in obj) {
+                // 1. Catch Real Injections (Object Keys starting with $)
                 if (/^\$/.test(key)) {
                     detected = true;
                     delete obj[key];
-                } else {
-                    sanitize(obj[key]);
+                } 
+                // 2. Recursively check nested objects
+                else if (obj[key] instanceof Object) {
+                    if (sanitize(obj[key])) {
+                        detected = true;
+                    }
+                } 
+                // 3. Catch UI Demo Injections (Stringified payloads)
+                else if (typeof obj[key] === 'string') {
+                    // Looks for patterns like {"$gt" or {$ne inside strings
+                    if (/\{\s*"\$|\{\s*\$/.test(obj[key]) || obj[key].includes('"$gt"') || obj[key].includes('"$ne"')) {
+                        detected = true;
+                        obj[key] = "[SANITIZED_PAYLOAD]";
+                    }
                 }
             }
         }

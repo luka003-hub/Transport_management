@@ -17,18 +17,22 @@ const app = express();
 // Required for Rate Limiting to work correctly on Render/Cloud
 app.set('trust proxy', 1);
 
+// --- START OF FIX ---
+// These must stay here so the body is readable for the sanitizer
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 5. Global Sanitization (MOVED UP)
+// It MUST be here to detect malicious keys before they reach the static files or routes
+app.use(sanitizeInput);
+// --- END OF FIX ---
+
 // 3. Apply Security Layers
 applySecurity(app);
-//app.use(ipBlocker);
+app.use(ipBlocker);
 
 // 4. Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
-
-// 5. Global Sanitization
-app.use(sanitizeInput);
 
 // 6. Brute Force Protection Logic
 const loginLimiter = rateLimit({
@@ -37,7 +41,7 @@ const loginLimiter = rateLimit({
     handler: async (req, res) => {
         const SecurityLog = require('./models/SecurityLog');
         await SecurityLog.create({
-            ip: req.ip,
+            ip: req.ip || 'Unknown',
             action: "Brute Force Threshold Reached",
             blocked: true
         });
@@ -60,7 +64,6 @@ app.get('/', (req, res) => {
 });
 
 // 8. PRODUCTION LISTEN LOGIC
-// Render assigns a dynamic port. Binding to '0.0.0.0' is mandatory for Render to route traffic.
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);

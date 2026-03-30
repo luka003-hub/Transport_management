@@ -5,7 +5,7 @@ const SecurityLog = require("../models/SecurityLog");
 const router = express.Router();
 
 // @route   GET /api/security/logs
-router.get("api/security/logs", authenticate, authorize("admin"), async (req, res) => {
+router.get("/logs", authenticate, authorize("admin"), async (req, res) => {
   try {
     const logs = await SecurityLog.find().sort({ timestamp: -1 }).limit(50);
     res.json(logs);
@@ -15,7 +15,7 @@ router.get("api/security/logs", authenticate, authorize("admin"), async (req, re
 });
 
 // @route   GET /api/security/blocked-count
-router.get("api/security/blocked-count", authenticate, authorize("admin"), async (req, res) => {
+router.get("/blocked-count", authenticate, authorize("admin"), async (req, res) => {
   try {
     const count = await SecurityLog.countDocuments({ blocked: true });
     res.json({ blockedAttacks: count });
@@ -25,7 +25,7 @@ router.get("api/security/blocked-count", authenticate, authorize("admin"), async
 });
 
 // @route   POST /api/security/log
-router.post("api/security/log", authenticate, async (req, res) => {
+router.post("/log", authenticate, async (req, res) => {
   try {
     const { action, blocked } = req.body;
     const log = new SecurityLog({
