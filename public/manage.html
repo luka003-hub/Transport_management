@@ -1,89 +1,68 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-
     <title>Manage Fleet | T-DMS</title>
-
 </head>
-
-<body class="bg-slate-100 p-8">
-
-    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
-
-        <h2 class="text-2xl font-bold mb-6">Register New Vehicle</h2>
-
+<body class="bg-slate-100 p-4 md:p-8 min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-2xl bg-white p-6 md:p-8 rounded-xl shadow-md border-t-4 border-blue-600">
+        <h2 class="text-2xl font-bold mb-6 text-slate-800 text-center md:text-left">Register New Vehicle</h2>
         <form id="vehicleForm" class="space-y-4">
-
-            <input type="text" id="regNumber" placeholder="Reg Number (e.g. KCC 123X)" class="w-full p-2 border rounded" required>
-
-            <input type="text" id="route" placeholder="Assigned Route" class="w-full p-2 border rounded" required>
-
-            <input type="text" id="driver" placeholder="Driver Name" class="w-full p-2 border rounded" required>
-
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded font-bold">Add Vehicle to Fleet</button>
-
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Registration Number</label>
+                <input type="text" id="regNumber" placeholder="e.g. KCC 123X" class="w-full p-3 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" required>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Assigned Route</label>
+                <input type="text" id="route" placeholder="e.g. Nairobi - Thika" class="w-full p-3 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" required>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Driver Name</label>
+                <input type="text" id="driver" placeholder="Enter Full Name" class="w-full p-3 border rounded bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" required>
+            </div>
+            <div class="flex flex-col md:flex-row gap-4 pt-4">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded font-bold transition">Add Vehicle to Fleet</button>
+                <a href="dashboard.html" class="w-full bg-slate-200 text-center p-3 rounded font-bold text-slate-700 hover:bg-slate-300 transition">Back to Dashboard</a>
+            </div>
         </form>
-
     </div>
 
-
-
     <script>
-
         document.getElementById('vehicleForm').addEventListener('submit', async (e) => {
-
             e.preventDefault();
-
             const token = localStorage.getItem('token');
+            if (!token) { window.location.href = '/index.html'; return; }
 
             const data = {
-
                 regNumber: document.getElementById('regNumber').value,
-
                 route: document.getElementById('route').value,
-
                 driver: document.getElementById('driver').value,
-
                 status: "Active"
-
             };
 
+            try {
+                const res = await fetch('/api/vehicles', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify(data)
+                });
 
-
-            const res = await fetch('/api/vehicles', {
-
-                method: 'POST',
-
-                headers: {
-
-                    'Content-Type': 'application/json',
-
-                    'Authorization': `Bearer ${token}`
-
-                },
-
-                body: JSON.stringify(data)
-
-            });
-
-
-
-            if (res.ok) {
-
-                alert("Vehicle Added Successfully!");
-
-                window.location.href = '/dashboard.html';
-
+                if (res.ok) {
+                    alert("Vehicle Added Successfully!");
+                    window.location.href = '/dashboard.html';
+                } else {
+                    const errData = await res.json();
+                    alert(errData.error || "Failed to add vehicle.");
+                }
+            } catch (err) {
+                alert("Server error. Check your connection.");
             }
-
         });
-
     </script>
-
 </body>
-
 </html>

@@ -9,7 +9,7 @@ const router = express.Router();
  * @desc    Get all vehicles
  * @access  Private (All authenticated users)
  */
-router.get("/api/vehicles", authenticate, async (req, res) => {
+router.get("/", authenticate, async (req, res) => {
   try {
     const vehicles = await Vehicle.find();
     res.json(vehicles);
