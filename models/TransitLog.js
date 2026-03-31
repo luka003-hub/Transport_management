@@ -6,6 +6,7 @@ const transitSchema = new mongoose.Schema({
   driver: String,
   revenue: Number,
   securityHash: String,
+  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   timestamp: { type: Date, default: Date.now }
 });
 

@@ -5,13 +5,14 @@ const { authenticate, authorize } = require("../middleware/auth");
 const router = express.Router();
 
 /**
- * @route   GET /api/vehicles
- * @desc    Get all vehicles
- * @access  Private (All authenticated users)
+ * @route    GET /api/vehicles
+ * @desc     Get ONLY the logged-in admin's vehicles
+ * @access   Private
  */
 router.get("/", authenticate, async (req, res) => {
   try {
-    const vehicles = await Vehicle.find();
+    // FIX: Filter by adminId to ensure data isolation
+    const vehicles = await Vehicle.find({ adminId: req.user.id });
     res.json(vehicles);
   } catch (error) {
     console.error("Fetch Vehicles Error:", error);
@@ -20,9 +21,9 @@ router.get("/", authenticate, async (req, res) => {
 });
 
 /**
- * @route   POST /api/vehicles
- * @desc    Add a new vehicle
- * @access  Private (Admin Only)
+ * @route    POST /api/vehicles
+ * @desc     Add a new vehicle attached to this admin
+ * @access   Private (Admin Only)
  */
 router.post("/", authenticate, authorize("admin"), async (req, res) => {
   try {
@@ -32,16 +33,18 @@ router.post("/", authenticate, authorize("admin"), async (req, res) => {
       return res.status(400).json({ error: "Vehicle registration is required" });
     }
 
-    const existingVehicle = await Vehicle.findOne({ regNumber });
+    // Check if THIS admin already has this vehicle
+    const existingVehicle = await Vehicle.findOne({ regNumber, adminId: req.user.id });
     if (existingVehicle) {
-      return res.status(400).json({ error: "Vehicle already registered" });
+      return res.status(400).json({ error: "You have already registered this vehicle" });
     }
 
     const vehicle = new Vehicle({ 
       regNumber,
       route,
       driver,
-      status: status || "Active" 
+      status: status || "Active",
+      adminId: req.user.id // FIX: Attach the creator's ID
     });
 
     await vehicle.save();
@@ -53,15 +56,16 @@ router.post("/", authenticate, authorize("admin"), async (req, res) => {
 });
 
 /**
- * @route   DELETE /api/vehicles/:id
- * @desc    Remove a vehicle from fleet
- * @access  Private (Admin Only)
+ * @route    DELETE /api/vehicles/:id
+ * @desc     Remove a vehicle (Only if owned by this admin)
+ * @access   Private (Admin Only)
  */
 router.delete("/:id", authenticate, authorize("admin"), async (req, res) => {
     try {
-        const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
+        // FIX: Ensure the vehicle belongs to this admin before deleting
+        const vehicle = await Vehicle.findOneAndDelete({ _id: req.params.id, adminId: req.user.id });
         if (!vehicle) {
-            return res.status(404).json({ error: "Vehicle not found" });
+            return res.status(404).json({ error: "Vehicle not found or unauthorized" });
         }
         res.json({ msg: "Vehicle removed successfully" });
     } catch (error) {
