@@ -5,228 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Admin Dashboard | Transport DMS</title>
+    <style>
+        /* Hide scrollbar for the mobile navigation */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="bg-slate-100 flex">
+<body class="bg-slate-100 flex flex-col md:flex-row min-h-screen">
 
-    <div class="w-64 bg-slate-900 h-screen sticky top-0 p-6 text-white shadow-xl">
-
-        <div class="flex items-center space-x-2 mb-10">
-
+    <div class="w-full md:w-64 bg-slate-900 md:h-screen sticky top-0 z-50 p-4 md:p-6 text-white shadow-xl flex-shrink-0">
+        <div class="flex items-center justify-center md:justify-start space-x-2 mb-4 md:mb-10">
             <div class="w-8 h-8 bg-blue-500 rounded-lg shadow-lg shadow-blue-500/50"></div>
-
             <span class="text-xl font-bold tracking-tighter text-blue-400">T-DMS SECURE</span>
-
         </div>
 
-        <nav class="space-y-4">
-
-            <a href="dashboard.html" class="flex items-center space-x-3 p-3 bg-slate-800 rounded-lg text-blue-400 font-semibold border-l-4 border-blue-500">
-
+        <nav class="flex flex-row md:flex-col gap-2 md:gap-0 md:space-y-4 overflow-x-auto hide-scrollbar pb-2 md:pb-0">
+            <a href="dashboard.html" class="flex-shrink-0 flex items-center space-x-3 p-2 md:p-3 bg-slate-800 rounded-lg text-blue-400 font-semibold border-b-4 md:border-b-0 md:border-l-4 border-blue-500">
                 <span>Dashboard</span>
-
             </a>
-
-            <a href="manage.html" class="flex items-center space-x-3 p-3 hover:bg-slate-800 transition rounded-lg text-slate-300">
-
+            <a href="manage.html" class="flex-shrink-0 flex items-center space-x-3 p-2 md:p-3 hover:bg-slate-800 transition rounded-lg text-slate-300">
                 <span>Register Vehicle</span>
-
             </a>
-
-            <a href="recordtrip.html" class="flex items-center space-x-3 p-3 hover:bg-slate-800 transition rounded-lg text-emerald-400 font-bold italic">
-
+            <a href="recordtrip.html" class="flex-shrink-0 flex items-center space-x-3 p-2 md:p-3 hover:bg-slate-800 transition rounded-lg text-emerald-400 font-bold italic">
                 <span>+ Record Trip</span>
-
             </a>
-
-            <a href="securitylogs.html" class="flex items-center space-x-3 p-3 hover:bg-slate-800 transition rounded-lg text-slate-300">
-
+            <a href="securitylogs.html" class="flex-shrink-0 flex items-center space-x-3 p-2 md:p-3 hover:bg-slate-800 transition rounded-lg text-slate-300">
                 <span>Security Audit</span>
-
             </a>
-
-            <a href="#" id="logoutBtn" class="flex items-center space-x-3 p-3 hover:bg-red-900/20 transition rounded-lg border-t border-slate-700 mt-10">
-
+            <a href="#" id="logoutBtn" class="flex-shrink-0 flex items-center space-x-3 p-2 md:p-3 hover:bg-red-900/20 transition rounded-lg md:border-t md:border-slate-700 md:mt-10">
                 <span class="text-red-400 font-bold">Logout</span>
-
             </a>
-
         </nav>
-
     </div>
 
-
-
-    <div class="flex-1 p-8 overflow-y-auto">
-
-        <header class="flex justify-between items-center mb-10">
-
+    <div class="flex-1 p-4 md:p-8 overflow-y-auto w-full">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-10">
             <div>
-
-                <h2 class="text-3xl font-bold text-slate-800">System Overview</h2>
-
-                <p class="text-slate-500">Fleet Operations & Integrity Dashboard</p>
-
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">System Overview</h2>
+                <p class="text-slate-500 text-sm md:text-base">Fleet Operations & Integrity Dashboard</p>
             </div>
-
-            <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-xs font-black animate-pulse border border-emerald-300 uppercase">
-
+            <div class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-[10px] md:text-xs font-black animate-pulse border border-emerald-300 uppercase self-start md:self-auto">
                 Status: Encrypted & Secure
-
             </div>
-
         </header>
 
-
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-center">
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
-
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10 text-center">
+            <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
                 <p class="text-slate-400 text-xs font-bold uppercase mb-1">Active Vehicles</p>
-
-                <h3 id="activeVehicles" class="text-3xl font-black text-slate-800">...</h3>
-
+                <h3 id="activeVehicles" class="text-2xl md:text-3xl font-black text-slate-800">...</h3>
             </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
-
+            <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
                 <p class="text-slate-400 text-xs font-bold uppercase mb-1">Daily Revenue</p>
-
-                <h3 id="totalRevenue" class="text-3xl font-black text-slate-800 text-blue-600">...</h3>
-
+                <h3 id="totalRevenue" class="text-2xl md:text-3xl font-black text-slate-800 text-blue-600">...</h3>
             </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition">
-
+            <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition sm:col-span-2 md:col-span-1">
                 <p class="text-slate-400 text-xs font-bold uppercase mb-1">Blocked Intrusions</p>
-
-                <h3 id="blockedAttacks" class="text-3xl font-black text-red-600">...</h3>
-
+                <h3 id="blockedAttacks" class="text-2xl md:text-3xl font-black text-red-600">...</h3>
             </div>
-
         </div>
 
-
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-
-            <div class="bg-slate-900 p-6 rounded-xl border border-blue-500/30">
-
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-10">
+            <div class="bg-slate-900 p-4 md:p-6 rounded-xl border border-blue-500/30">
                 <h4 class="text-blue-400 font-bold mb-2 flex items-center text-sm">
-
                     <span class="mr-2">🛡️</span> AES-256 Encryption
-
                 </h4>
-
                 <div class="flex items-center space-x-4">
-
                     <div class="w-full bg-slate-800 rounded-full h-1.5">
-
                         <div class="bg-blue-500 h-1.5 rounded-full" style="width: 100%"></div>
-
                     </div>
-
                     <span class="text-[10px] font-mono text-blue-300 uppercase">Active</span>
-
                 </div>
-
             </div>
-
-            <div class="bg-slate-900 p-6 rounded-xl border border-emerald-500/30">
-
+            <div class="bg-slate-900 p-4 md:p-6 rounded-xl border border-emerald-500/30">
                 <h4 class="text-emerald-400 font-bold mb-2 flex items-center text-sm">
-
                     <span class="mr-2">🛰️</span> Active Middleware Shield
-
                 </h4>
-
-                <div class="flex space-x-4 text-[9px] font-mono text-slate-400">
-
-                    <span>XSS: ENABLED</span>
-
-                    <span>NoSQL: ENABLED</span>
-
-                    <span>RATE-LIMIT: ACTIVE</span>
-
+                <div class="flex flex-wrap gap-2 text-[9px] font-mono text-slate-400">
+                    <span class="bg-slate-800 px-2 py-1 rounded">XSS: ENABLED</span>
+                    <span class="bg-slate-800 px-2 py-1 rounded">NoSQL: ENABLED</span>
+                    <span class="bg-slate-800 px-2 py-1 rounded">RATE-LIMIT: ACTIVE</span>
                 </div>
-
             </div>
-
         </div>
 
-
-
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-10">
-
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8 md:mb-10">
+            <div class="p-4 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <h3 class="font-bold text-slate-800 text-lg">Recent Transit Logs</h3>
-
                 <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold uppercase tracking-widest">SHA-256 Hashed</span>
-
             </div>
-
-            <table class="w-full text-left">
-
-                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-tighter">
-
-                    <tr>
-
-                        <th class="px-6 py-4">Vehicle Reg</th>
-
-                        <th class="px-6 py-4">Route</th>
-
-                        <th class="px-6 py-4">Integrity Hash</th>
-
-                        <th class="px-6 py-4 text-right">Status</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="transitTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
-
-            </table>
-
+            <div class="overflow-x-auto">
+                <table class="w-full text-left whitespace-nowrap">
+                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-tighter">
+                        <tr>
+                            <th class="px-6 py-4">Vehicle Reg</th>
+                            <th class="px-6 py-4">Route</th>
+                            <th class="px-6 py-4">Integrity Hash</th>
+                            <th class="px-6 py-4 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transitTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                </table>
+            </div>
         </div>
-
-
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-
-            <div class="p-6 border-b border-slate-100">
-
+            <div class="p-4 md:p-6 border-b border-slate-100">
                 <h3 class="font-bold text-slate-800 text-lg">Fleet Inventory</h3>
-
             </div>
-
-            <table class="w-full text-left">
-
-                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-tighter">
-
-                    <tr>
-
-                        <th class="px-6 py-4">Registration</th>
-
-                        <th class="px-6 py-4">Current Status</th>
-
-                        <th class="px-6 py-4">Last Sync</th>
-
-                        <th class="px-6 py-4 text-right">Actions</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="fleetTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
-
-            </table>
-
+            <div class="overflow-x-auto">
+                <table class="w-full text-left whitespace-nowrap">
+                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-tighter">
+                        <tr>
+                            <th class="px-6 py-4">Registration</th>
+                            <th class="px-6 py-4">Current Status</th>
+                            <th class="px-6 py-4">Last Sync</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fleetTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                </table>
+            </div>
         </div>
-
     </div>
-
-
 
     <script>
     async function loadData() {
@@ -246,7 +146,6 @@
                     document.getElementById('blockedAttacks').innerText = (data.blockedAttacks || 0).toString().padStart(2, '0');
 
                     const transitBody = document.getElementById('transitTableBody');
-                    // Ensure recentLogs exists before mapping
                     const logs = data.recentLogs || [];
                     transitBody.innerHTML = logs.map(log => `
                         <tr class="hover:bg-blue-50/50 transition">
@@ -268,13 +167,11 @@
                 });
                 const vehicles = await vRes.json();
                 
-                // LOG THIS TO YOUR CONSOLE (F12) TO SEE IF DATA IS ARRIVING
                 console.log("Vehicles received:", vehicles);
 
                 if (vRes.ok) {
                     const fleetBody = document.getElementById('fleetTableBody');
                     
-                    // If the array is empty, show a message so you know the connection is working
                     if (!vehicles || vehicles.length === 0) {
                         fleetBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">No vehicles registered yet.</td></tr>`;
                     } else {
@@ -335,7 +232,5 @@
 
         window.onload = loadData;
     </script>
-
 </body>
-
 </html>
